@@ -67,7 +67,8 @@
               "browserTarget": "matchmaking-api-client:build:production"
             },
             "development": {
-              "browserTarget": "matchmaking-api-client:build:development"
+              "browserTarget": "matchmaking-api-client:build:development",
+              "proxyConfig": "src/proxy.conf.json"
             }
           },
           "defaultConfiguration": "development"

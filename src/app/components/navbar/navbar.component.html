@@ -9,6 +9,7 @@
             <ng-container *ngIf = "auth.checkLoginStatus()">
                 <a class="nav-link" routerLink="/games">Games</a>
                 <a class="nav-link" routerLink="/matchmake">Matchmake</a>
+                <a class="nav-link" (click) = "logout()">Logout</a>
             </ng-container>
 
             <ng-container *ngIf = "!auth.checkLoginStatus()">

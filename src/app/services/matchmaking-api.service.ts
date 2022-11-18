@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpResponseBase } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpResponse, HttpResponseBase } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AuthServiceService } from './auth-service.service';
 
@@ -79,16 +79,24 @@ export interface Joined_Player_Game_Ratings {
 })
 export class MatchmakingApiService {
 
-  api_url = "http://127.0.0.1:18080"
+  api_url = "http://192.168.6.134:18080"
 
   constructor(private http: HttpClient, private auth:AuthServiceService) { }
 
-  signUp(developer: Developer): Observable<HttpResponseBase> {
-    return this.http.post(this.api_url + "/signup", developer, {observe: 'response'});
+  signUp(developer: Developer): Observable<HttpResponse<string>> {
+    let options = {
+      observe: 'response' as const,
+      responseType: 'text' as const,
+    };
+    return this.http.post("/api/signup", developer, options);
   }
 
-  login(developer: Developer): Observable<HttpResponseBase> {
-    return this.http.post(this.api_url + "/login", developer, {observe: 'response'});
+  login(developer: Developer): Observable<HttpResponse<string>> {
+    let options = {
+      observe: 'response' as const,
+      responseType: 'text' as const,
+    };
+    return this.http.post("/api/login", developer, options);
   }
 
   getGames() {
