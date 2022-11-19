@@ -11,6 +11,9 @@ import { GameViewComponent } from './components/game-view/game-view.component';
 import { LoginViewComponent } from './components/login-view/login-view.component';
 import { MatchmakeViewComponent } from './components/matchmake-view/matchmake-view.component';
 import { CookieService } from 'ngx-cookie-service';
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
@@ -26,7 +29,10 @@ import { CookieService } from 'ngx-cookie-service';
     AppRoutingModule,
     HttpClientModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatTableModule,
+    MatPaginatorModule,
+    NoopAnimationsModule
   ],
   providers: [ CookieService ],
   bootstrap: [AppComponent]

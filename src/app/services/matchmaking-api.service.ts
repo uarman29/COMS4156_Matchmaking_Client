@@ -99,7 +99,7 @@ export class MatchmakingApiService {
     return this.http.post("/api/login", developer, options);
   }
 
-  getGames() {
+  getGames(): Observable<HttpResponse<Game_Details[]>> {
     let options = {
       observe: 'response' as const,
       headers: new HttpHeaders()
@@ -108,25 +108,40 @@ export class MatchmakingApiService {
     return this.http.get<Game_Details[]>(this.api_url + "/games", options);
   }
 
-  getGame(game_id: number) {
+  getGame(game_id: number): Observable<HttpResponse<Game_Details>> {
     let options = {
       observe: 'response' as const,
       headers: new HttpHeaders()
         .set("Authorization", this.auth.getAPIKey())
     };
-    return this.http.get(this.api_url + "/games/" + game_id, options);
+    return this.http.get<Game_Details>(this.api_url + "/games/" + game_id, options);
   }
 
-  addGame() {
-
+  addGame(gd: Game_Details): Observable<HttpResponse<Game_Details>> {
+    let options = {
+      observe: 'response' as const,
+      headers: new HttpHeaders()
+        .set("Authorization", this.auth.getAPIKey())
+    };
+    return this.http.post<Game_Details>(this.api_url + "/games", gd, options);
   }
 
-  updateGame() {
-
+  updateGame(gd: Game_Details): Observable<HttpResponse<Game_Details>> {
+    let options = {
+      observe: 'response' as const,
+      headers: new HttpHeaders()
+        .set("Authorization", this.auth.getAPIKey())
+    };
+    return this.http.put<Game_Details>(this.api_url + "/games", gd, options);
   }
 
-  deleteGame() {
-    
+  deleteGame(game_id: number): Observable<HttpResponse<Game_Details>> {
+    let options = {
+      observe: 'response' as const,
+      headers: new HttpHeaders()
+        .set("Authorization", this.auth.getAPIKey())
+    };
+    return this.http.delete<Game_Details>(this.api_url + "/games/" + game_id, options);
   }
 
   matchmake() {
