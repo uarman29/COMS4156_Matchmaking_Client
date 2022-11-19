@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { Game_Details, MatchmakingApiService } from 'src/app/services/matchmaking-api.service';
+import { Game_Details, Game_Response_Object, Get_Games_Response, MatchmakingApiService, Post_Games_Request } from 'src/app/services/matchmaking-api.service';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { FormBuilder, FormControl } from '@angular/forms';
@@ -12,9 +12,9 @@ import { Router } from '@angular/router';
 })
 export class GamesViewComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
-  games: Game_Details[] = []
+  games: Game_Response_Object[] = []
   displayedColumns:string[] = ["game_name", "category", "players_per_team", "teams_per_match", "view"];
-  dataSource!:MatTableDataSource<Game_Details>;
+  dataSource!:MatTableDataSource<Game_Response_Object>;
 
   gameForm = this.fb.group({
     game_name: [""],
@@ -81,7 +81,7 @@ export class GamesViewComponent implements OnInit {
 
   updateData() {
     this.matchmatckingAPI.getGames().subscribe(response =>{
-      this.games = response.body ? response.body : [];
+      this.games = response.body ? response.body.games : [];
       this.dataSource.data = this.games;
     });
   }
@@ -95,11 +95,10 @@ export class GamesViewComponent implements OnInit {
 
     this.matchmatckingAPI.getGames().subscribe(response =>{
       if(response.status == 200) {
-        alert("GOT GAMES");
-        this.games = response.body ? response.body : [];
-        this.dataSource = new MatTableDataSource<Game_Details>(this.games);
+        this.games = response.body ? response.body.games : [];
+        this.dataSource = new MatTableDataSource<Game_Response_Object>(this.games);
         this.dataSource.paginator = this.paginator;
-      }
+      } 
     });
 
     this.router.events.subscribe(() => this.updateData());
@@ -109,21 +108,16 @@ export class GamesViewComponent implements OnInit {
     if(!this.gameForm.valid){
       return;
     }
-    let gd:Game_Details = {
-      game_id: 1, 
-      developer_email: "",
-      game_name: this.game_name.value, 
+
+    let parameters: string[] = [this.game_parameter1_name.value, this.game_parameter2_name.value, this.game_parameter3_name.value,this.game_parameter4_name.value]
+    let weights: number[] = [this.game_parameter1_weight.value, this.game_parameter2_weight.value, this.game_parameter3_weight.value,this.game_parameter4_weight.value]
+    let gd:Post_Games_Request = {
+      name: this.game_name.value, 
       category: this.catgeory.value,
       players_per_team: this.players_per_team.value, 
       teams_per_match: this.teams_per_match.value, 
-      game_parameter1_name: this.game_parameter1_name.value,
-      game_parameter1_weight: this.game_parameter1_weight.value,
-      game_parameter2_name: this.game_parameter2_name.value,
-      game_parameter2_weight: this.game_parameter2_weight.value,
-      game_parameter3_name: this.game_parameter3_name.value,
-      game_parameter3_weight: this.game_parameter3_weight.value,
-      game_parameter4_name: this.game_parameter4_name.value,
-      game_parameter4_weight: this.game_parameter4_weight.value,
+      parameters: parameters,
+      weights: weights
     };
     this.matchmatckingAPI.addGame(gd).subscribe(response => {
       this.updateData();

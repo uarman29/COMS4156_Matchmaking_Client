@@ -1,21 +1,21 @@
 <form [formGroup] = "gameForm" (ngSubmit)="onAddGame()">
     <div class="row game-form-group mb-3">
-        <div class="col-md-5 game-form-control">
+        <div class="col-md-4 game-form-control">
             <label for="game_name" class="form-label">Name</label>
             <input type="text" class="form-control" formControlName = "game_name" name="game_name" required>
         </div>
 
-        <div class="col-md-5 game-form-control">
+        <div class="col-md-4 game-form-control">
             <label for="category" class="form-label">Category</label>
             <input type="text" class="form-control" formControlName = "category" name="category" required>
         </div>
 
-        <div class="col-md-1 game-form-control">
+        <div class="col-md-2 game-form-control">
             <label for="players_per_team" class="form-label">Players Per Team</label>
             <input type="number" class="form-control" formControlName = "players_per_team" name="players_per_team" min="1" step="1" required>
         </div>
 
-        <div class="col-md-1 game-form-control">
+        <div class="col-md-2 game-form-control">
             <label for="teams_per_match" class="form-label">Teams Per Match</label>
             <input type="number" class="form-control" formControlName = "teams_per_match" name="teams_per_match" min="1" step="1" required>
         </div>
@@ -23,44 +23,44 @@
     </div>
 
     <div class="row game-form-group mb-3">
-        <div class="col-md-2 game-form-control">
+        <div class="col-md-3 game-form-control">
             <label for="game_parameter1_name" class="form-label">Parameter 1 Name</label>
             <input type="text" class="form-control" formControlName = "game_parameter1_name" name="game_parameter1_name">
         </div>
 
-        <div class="col-md-2 game-form-control">
+        <div class="col-md-3 game-form-control">
             <label for="game_parameter1_weight" class="form-label">Parameter 1 Weight</label>
             <input type="number" class="form-control" formControlName = "game_parameter1_weight" name="game_parameter1_weight">
         </div>
 
-        <div class="col-md-2 game-form-control">
+        <div class="col-md-3 game-form-control">
             <label for="game_parameter2_name" class="form-label">Parameter 2 Name</label>
             <input type="text" class="form-control" formControlName = "game_parameter2_name" name="game_parameter2_name">
         </div>
 
-        <div class="col-md-2 game-form-control">
+        <div class="col-md-3 game-form-control">
             <label for="game_parameter2_weight" class="form-label">Parameter 2 Weight</label>
             <input type="number" class="form-control" formControlName = "game_parameter2_weight" name="game_parameter2_weight">
         </div>
     </div>
 
     <div class="row game-form-group mb-3">
-        <div class="col-md-2 game-form-control">
+        <div class="col-md-3 game-form-control">
             <label for="game_parameter3_name" class="form-label">Parameter 3 Name</label>
             <input type="text" class="form-control" formControlName = "game_parameter3_name" name="game_parameter3_name">
         </div>
 
-        <div class="col-md-2 game-form-control">
+        <div class="col-md-3 game-form-control">
             <label for="game_parameter3_weight" class="form-label">Parameter 3 Weight</label>
             <input type="number" class="form-control" formControlName = "game_parameter3_weight" name="game_parameter3_weight">
         </div>
 
-        <div class="col-md-2 game-form-control">
+        <div class="col-md-3 game-form-control">
             <label for="game_parameter4_name" class="form-label">Parameter 4 Name</label>
             <input type="text" class="form-control" formControlName = "game_parameter4_name" name="game_parameter4_name">
         </div>
 
-        <div class="col-md-2 game-form-control">
+        <div class="col-md-3 game-form-control">
             <label for="game_parameter4_weight" class="form-label">Parameter 4 Weight</label>
             <input type="number" class="form-control" formControlName = "game_parameter4_weight" name="game_parameter4_weight">
         </div>
@@ -81,7 +81,7 @@
     <table mat-table [dataSource]="dataSource">
         <ng-container matColumnDef="game_name">
         <th mat-header-cell *matHeaderCellDef> Game Name </th>
-        <td mat-cell *matCellDef="let game">{{game.game_name}}</td>
+        <td mat-cell *matCellDef="let game">{{game.name}}</td>
         </ng-container>
     
         <ng-container matColumnDef="category">
