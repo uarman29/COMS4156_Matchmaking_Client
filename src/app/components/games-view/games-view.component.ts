@@ -117,13 +117,13 @@ export class GamesViewComponent implements OnInit {
       players_per_team: this.players_per_team.value, 
       teams_per_match: this.teams_per_match.value, 
       game_parameter1_name: this.game_parameter1_name.value,
-      game_paramtere1_weight: this.game_parameter1_weight.value,
+      game_parameter1_weight: this.game_parameter1_weight.value,
       game_parameter2_name: this.game_parameter2_name.value,
-      game_paramtere2_weight: this.game_parameter2_weight.value,
+      game_parameter2_weight: this.game_parameter2_weight.value,
       game_parameter3_name: this.game_parameter3_name.value,
-      game_paramtere3_weight: this.game_parameter3_weight.value,
+      game_parameter3_weight: this.game_parameter3_weight.value,
       game_parameter4_name: this.game_parameter4_name.value,
-      game_paramtere4_weight: this.game_parameter4_weight.value,
+      game_parameter4_weight: this.game_parameter4_weight.value,
     };
     this.matchmatckingAPI.addGame(gd).subscribe(response => {
       this.updateData();

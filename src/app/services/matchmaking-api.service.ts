@@ -28,13 +28,13 @@ export interface Game_Details {
   developer_email: string,
 	game_name: string,
 	game_parameter1_name?: string,
-	game_paramtere1_weight?: number,
+	game_parameter1_weight?: number,
   game_parameter2_name?: string,
-	game_paramtere2_weight?: number,
+	game_parameter2_weight?: number,
   game_parameter3_name?: string,
-	game_paramtere3_weight?: number,
+	game_parameter3_weight?: number,
   game_parameter4_name?: string,
-	game_paramtere4_weight?: number,
+	game_parameter4_weight?: number,
   category: string,
   players_per_team: number,
   teams_per_match: number,
@@ -44,10 +44,10 @@ export interface Game_Details {
 export interface Player_Game_Ratings {
 	player_email: string,
 	game_id: number,
-	game_paramter1_value?: number,
-  game_paramter2_value?: number,
-  game_paramter3_value?: number,
-  game_paramter4_value?: number,
+	game_parameter1_value?: number,
+  game_parameter2_value?: number,
+  game_parameter3_value?: number,
+  game_parameter4_value?: number,
   is_valid?: boolean
 }
 
@@ -57,17 +57,17 @@ export interface Joined_Player_Game_Ratings {
   developer_email: string,
 	game_name: string,
 	game_parameter1_name?: string,
-	game_paramtere1_weight?: number,
-  game_paramter1_value?: number,
+	parameter1_weight?: number,
+  game_parameter1_value?: number,
   game_parameter2_name?: string,
-	game_paramtere2_weight?: number,
-  game_paramter2_value?: number,
+	parameter2_weight?: number,
+  game_parameter2_value?: number,
   game_parameter3_name?: string,
-	game_paramtere3_weight?: number,
-  game_paramter3_value?: number,
+	parameter3_weight?: number,
+  game_parameter3_value?: number,
   game_parameter4_name?: string,
-	game_paramtere4_weight?: number,
-  game_paramter4_value?: number,
+	parameter4_weight?: number,
+  game_parameter4_value?: number,
   category: string,
   players_per_team: number,
   teams_per_match: number,
@@ -142,6 +142,42 @@ export class MatchmakingApiService {
         .set("Authorization", this.auth.getAPIKey())
     };
     return this.http.delete<Game_Details>(this.api_url + "/games/" + game_id, options);
+  }
+
+  getRatings(game_id: number): Observable<HttpResponse<Player_Game_Ratings[]>> {
+    let options = {
+      observe: 'response' as const,
+      headers: new HttpHeaders()
+        .set("Authorization", this.auth.getAPIKey())
+    };
+    return this.http.get<Player_Game_Ratings[]>(this.api_url + "/games/" + game_id + "/players", options);
+  }
+
+  addRating(game_id: number, pgr: Player_Game_Ratings): Observable<HttpResponse<Player_Game_Ratings>> {
+    let options = {
+      observe: 'response' as const,
+      headers: new HttpHeaders()
+        .set("Authorization", this.auth.getAPIKey())
+    };
+    return this.http.post<Player_Game_Ratings>(this.api_url + "/games/" + game_id + "/players", pgr, options);
+  }
+
+  updateRating(game_id: number, pgr: Player_Game_Ratings): Observable<HttpResponse<Player_Game_Ratings>> {
+    let options = {
+      observe: 'response' as const,
+      headers: new HttpHeaders()
+        .set("Authorization", this.auth.getAPIKey())
+    };
+    return this.http.put<Player_Game_Ratings>(this.api_url + "/games/" + game_id + "/players/" + pgr.player_email, pgr, options);
+  }
+
+  deleteRating(game_id: number, player_email: string): Observable<HttpResponse<Player_Game_Ratings>> {
+    let options = {
+      observe: 'response' as const,
+      headers: new HttpHeaders()
+        .set("Authorization", this.auth.getAPIKey())
+    };
+    return this.http.delete<Player_Game_Ratings>(this.api_url + "/games/" + game_id + "/players/" + player_email , options);
   }
 
   matchmake() {
