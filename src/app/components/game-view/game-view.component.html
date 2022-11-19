@@ -92,7 +92,7 @@
 
 <div>
     <h3>Player Ratings</h3>
-    <form>
+    <form [formGroup] = "ratingsForm">
         <div class="row order-form-group mb-3">
             <div class="col-md-2">
                 <label for="player_email" class="form-label">Player Email</label>
@@ -163,5 +163,15 @@
           </div>
         </ng-container>
       </ng-container>
+    </form>
+</div>
+
+<div>
+    <h1>Matchmake</h1>
+    <form [formGroup] = "matchmakingForm">
+        <div>Player Emails</div>
+        <label for="player_emails" class="form-label">Player Emails</label>
+        <textarea class="form-control" formControlName = "player_emails" required></textarea>
+        <button type="button" class="btn btn-primary" [disabled]="!matchmakingForm.valid" (click)="matchmake()">Matchmake</button>
     </form>
 </div>

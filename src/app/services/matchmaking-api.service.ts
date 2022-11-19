@@ -180,7 +180,16 @@ export class MatchmakingApiService {
     return this.http.delete<Player_Game_Ratings>(this.api_url + "/games/" + game_id + "/players/" + player_email , options);
   }
 
-  matchmake() {
-
+  matchmake(game_id:number, player_emails: string[]) {
+    let options = {
+      observe: 'response' as const,
+      headers: new HttpHeaders()
+        .set("Authorization", this.auth.getAPIKey())
+    };
+    let obj = {
+      game_id: game_id,
+      player_emails: player_emails
+    }
+    return this.http.post(this.api_url + "/matchmake", obj, options);
   }
 }

@@ -38,6 +38,10 @@ export class GameViewComponent implements OnInit {
     current_ratings: this.fb.array([])
   });
 
+  matchmakingForm = this.fb.group({
+    player_emails: [""]
+  });
+
   get game_name() {
     return this.gameForm.get('game_name') as FormControl;
   }
@@ -108,6 +112,10 @@ export class GameViewComponent implements OnInit {
 
   get game_parameter4_value() {
     return this.ratingsForm.get('game_parameter4_value') as FormControl;
+  }
+
+  get player_emails() {
+    return this.matchmakingForm.get('player_emails') as FormControl;
   }
 
   constructor(
@@ -216,6 +224,14 @@ export class GameViewComponent implements OnInit {
 
   deleteRating(i: number) {
     this.matchmakingAPI.deleteRating(this.game.game_id, this.current_ratings.at(i).get('player_email')!.value).subscribe(() => this.loadRatings());
+  }
+
+  matchmake() {
+    this.matchmakingAPI.matchmake(this.game.game_id, this.player_emails.value.split(",")).subscribe(response =>{
+      if (response.status == 200) {
+        console.log(response.body);
+      }
+    })
   }
 
 }
