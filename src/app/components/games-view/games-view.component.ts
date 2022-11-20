@@ -88,6 +88,10 @@ export class GamesViewComponent implements OnInit {
   
   constructor(private matchmatckingAPI: MatchmakingApiService, private fb: FormBuilder, private router: Router) { }
 
+  navigate(game: Game_Response_Object) {
+    this.router.navigate(["/games/"+ game.id]);
+  }
+  
   ngOnInit(): void {
     $(".btn-close").on("click", function(){
       $("#game-add-success-alert").addClass("d-none");

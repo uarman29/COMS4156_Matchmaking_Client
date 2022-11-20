@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Game_Details, MatchmakingApiService, Player_Game_Ratings } from 'src/app/services/matchmaking-api.service';
+import { Game_Details, Get_Players_Response, MatchmakingApiService, Player_Game_Ratings, Post_Player_Request } from 'src/app/services/matchmaking-api.service';
 
 @Component({
   selector: 'app-game-view',
@@ -126,22 +126,51 @@ export class GameViewComponent implements OnInit {
   ) { }
   
   loadRatings() {
-    this.matchmakingAPI.getRatings(this.game.game_id).subscribe(response =>{
-      if(response.status == 200) {
-        this.current_ratings.clear();
-        this.ratings = response.body ? response.body : [];
-        for(let rating of this.ratings) {
-          let ratingForm = this.fb.group({
-            player_email: [rating.player_email],
-            game_parameter1_value: [rating.game_parameter1_value],
-            game_parameter2_value: [rating.game_parameter2_value],
-            game_parameter3_value: [rating.game_parameter3_value],
-            game_parameter4_value: [rating.game_parameter4_value],
-          });
-          this.current_ratings.push(ratingForm);
+    if (this.game) {
+      this.matchmakingAPI.getRatings(this.game.game_id).subscribe(response =>{
+        if(response.status == 200) {
+          this.current_ratings.clear();
+          let raw_ratings: Get_Players_Response = {}
+          raw_ratings = response.body ? response.body : {};
+          this.ratings = [];
+          Object.keys(raw_ratings).forEach(key =>{
+            let rating: Player_Game_Ratings = {
+              game_id: raw_ratings[key]["game_id"],
+              player_email: key,
+            }
+            
+            rating.game_parameter1_value = 0;
+            rating.game_parameter2_value = 0;
+            rating.game_parameter3_value = 0;
+            rating.game_parameter4_value = 0;
+
+            if (this.game.game_parameter1_name)
+              rating.game_parameter1_value = raw_ratings[key][this.game.game_parameter1_name]
+            
+            if (this.game.game_parameter2_name)
+              rating.game_parameter2_value = raw_ratings[key][this.game.game_parameter2_name]
+            
+            if (this.game.game_parameter3_name)
+              rating.game_parameter3_value = raw_ratings[key][this.game.game_parameter3_name]
+            
+            if (this.game.game_parameter4_name)
+              rating.game_parameter4_value = raw_ratings[key][this.game.game_parameter4_name]
+
+            this.ratings.push(rating)
+          })
+          for(let rating of this.ratings) {
+            let ratingForm = this.fb.group({
+              player_email: [rating.player_email],
+              game_parameter1_value: [rating.game_parameter1_value],
+              game_parameter2_value: [rating.game_parameter2_value],
+              game_parameter3_value: [rating.game_parameter3_value],
+              game_parameter4_value: [rating.game_parameter4_value],
+            });
+            this.current_ratings.push(ratingForm);
+          }
         }
-      }
-    });
+      });
+    }
   }
 
   ngOnInit(): void {
@@ -150,19 +179,23 @@ export class GameViewComponent implements OnInit {
     this.matchmakingAPI.getGame(this.id).subscribe(response =>{
       if(response.status == 200)
       {
-        this.game_name.setValue(this.game.game_name);
-        this.catgeory.setValue(this.game.category);
-        this.players_per_team.setValue(this.game.players_per_team);
-        this.teams_per_match.setValue(this.game.teams_per_match);
-        this.game_parameter1_name.setValue(this.game.game_parameter1_name);
-        this.game_parameter1_weight.setValue(this.game.game_parameter1_weight);
-        this.game_parameter2_name.setValue(this.game.game_parameter2_name);
-        this.game_parameter2_weight.setValue(this.game.game_parameter2_weight);
-        this.game_parameter3_name.setValue(this.game.game_parameter3_name);
-        this.game_parameter3_weight.setValue(this.game.game_parameter3_weight);
-        this.game_parameter4_name.setValue(this.game.game_parameter4_name);
-        this.game_parameter4_weight.setValue(this.game.game_parameter4_weight);
-        this.loadRatings();
+        if(response.body)
+        {
+          this.game = response.body;
+          this.game_name.setValue(this.game.game_name);
+          this.catgeory.setValue(this.game.category);
+          this.players_per_team.setValue(this.game.players_per_team);
+          this.teams_per_match.setValue(this.game.teams_per_match);
+          this.game_parameter1_name.setValue(this.game.game_parameter1_name);
+          this.game_parameter1_weight.setValue(this.game.game_parameter1_weight);
+          this.game_parameter2_name.setValue(this.game.game_parameter2_name);
+          this.game_parameter2_weight.setValue(this.game.game_parameter2_weight);
+          this.game_parameter3_name.setValue(this.game.game_parameter3_name);
+          this.game_parameter3_weight.setValue(this.game.game_parameter3_weight);
+          this.game_parameter4_name.setValue(this.game.game_parameter4_name);
+          this.game_parameter4_weight.setValue(this.game.game_parameter4_weight);
+          this.loadRatings();
+        }
       } else if (response.status == 401) {
         this.router.navigate(["/games"]);
       }
@@ -199,15 +232,17 @@ export class GameViewComponent implements OnInit {
   }
 
   addRating() {
-    let rating:Player_Game_Ratings = {
-      game_id: this.game.game_id,
-      player_email: this.player_email.value, 
+    let rating:Post_Player_Request = {};
+    rating[this.player_email.value]= {
       game_parameter1_value: this.game_parameter1_value.value,
       game_parameter2_value: this.game_parameter2_value.value,
       game_parameter3_value: this.game_parameter3_value.value,
       game_parameter4_value: this.game_parameter4_value.value,
     };
-    this.matchmakingAPI.addRating(this.game.game_id, rating).subscribe(() => this.loadRatings());
+    this.matchmakingAPI.addRating(this.game.game_id, rating).subscribe(() => {
+      this.ratingsForm.reset();
+      this.loadRatings();
+    });
   }
 
   updateRating(i: number) {
@@ -227,7 +262,8 @@ export class GameViewComponent implements OnInit {
   }
 
   matchmake() {
-    this.matchmakingAPI.matchmake(this.game.game_id, this.player_emails.value.split(",")).subscribe(response =>{
+    let players: string[] = this.player_emails.value.split(",").map((player: string) => player.trim());
+    this.matchmakingAPI.matchmake(this.game.game_id, players).subscribe(response =>{
       if (response.status == 200) {
         console.log(response.body);
       }

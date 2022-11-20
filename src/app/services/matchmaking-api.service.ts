@@ -7,10 +7,21 @@ export interface map {
 	[key: string]: string;
 }
 
-export interface Link {
-	rel: string,
-	href: string
+export interface Get_Players_Response {
+  [key: string]: {
+    [key: string]: number
+  }
 }
+
+export interface Post_Player_Request {
+  [key: string]: {
+    game_parameter1_value?: number,
+    game_parameter2_value?: number,
+    game_parameter3_value?: number,
+    game_parameter4_value?: number,
+  }
+}
+
 
 export interface Developer {
 	developer_email: string,
@@ -25,7 +36,7 @@ export interface Player {
 
 export interface Game_Details {
 	game_id: number,
-  developer_email: string,
+  developer_email?: string,
 	game_name: string,
 	game_parameter1_name?: string,
 	game_parameter1_weight?: number,
@@ -46,6 +57,7 @@ export interface Get_Games_Response {
 }
 
 export interface Game_Response_Object {
+  id: number,
 	name: string,
 	parameters: string[],
 	weights: number[],
@@ -182,22 +194,23 @@ export class MatchmakingApiService {
     return this.http.delete<Game_Details>("/api/games/" + game_id, options);
   }
 
-  getRatings(game_id: number): Observable<HttpResponse<Player_Game_Ratings[]>> {
+  getRatings(game_id: number): Observable<HttpResponse<Get_Players_Response>> {
     let options = {
       observe: 'response' as const,
       headers: new HttpHeaders()
         .set("Authorization", "Bearer " + this.auth.getAPIKey())
     };
-    return this.http.get<Player_Game_Ratings[]>("/api/games/" + game_id + "/players", options);
+    return this.http.get<Get_Players_Response>("/api/games/" + game_id + "/players", options);
   }
 
-  addRating(game_id: number, pgr: Player_Game_Ratings): Observable<HttpResponse<Player_Game_Ratings>> {
+  addRating(game_id: number, pgr: Post_Player_Request) {
     let options = {
       observe: 'response' as const,
+      responseType: 'text' as const,
       headers: new HttpHeaders()
         .set("Authorization", "Bearer " + this.auth.getAPIKey())
     };
-    return this.http.post<Player_Game_Ratings>("/api/games/" + game_id + "/players", pgr, options);
+    return this.http.post("/api/games/" + game_id + "/players", pgr, options);
   }
 
   updateRating(game_id: number, pgr: Player_Game_Ratings): Observable<HttpResponse<Player_Game_Ratings>> {
@@ -225,6 +238,7 @@ export class MatchmakingApiService {
         .set("Authorization", "Bearer " + this.auth.getAPIKey())
     };
     let obj = {
+      matchmaking_type: "basic",
       game_id: game_id,
       player_emails: player_emails
     }
