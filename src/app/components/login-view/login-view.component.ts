@@ -17,8 +17,8 @@ export class LoginViewComponent implements OnInit {
   });
 
   signUpForm = this.fb.group({
-    developer_email: [""],
-    developer_password: [""],
+    signup_developer_email: [""],
+    signup_developer_password: [""],
   });
 
   get developer_email() {
@@ -29,40 +29,52 @@ export class LoginViewComponent implements OnInit {
     return this.loginForm.get('developer_password') as FormControl;
   }
 
+  get signup_developer_email() {
+    return this.signUpForm.get('signup_developer_email') as FormControl;
+  }
+
+  get signup_developer_password() {
+    return this.signUpForm.get('signup_developer_password') as FormControl;
+  }
+
   constructor(private fb: FormBuilder, private matchmakingApi: MatchmakingApiService, private auth:AuthServiceService, private router: Router) { }
 
   ngOnInit(): void {
   }
 
-  onLogin() {
-    let credentials:Developer = {developer_email: this.developer_email.value, developer_password: this.developer_password.value};
+  onLogin(fromSignUp: boolean) {
+    let credentials:Developer;
+    if(fromSignUp) 
+      credentials = {developer_email: this.signup_developer_email.value, developer_password: this.signup_developer_password.value};
+    else
+      credentials = {developer_email: this.developer_email.value, developer_password: this.developer_password.value};
+
     this.matchmakingApi.login(credentials).subscribe(response =>{
-      console.log(response);
       if(response.status == 200) {
         let token:string = response.body!.substring(response.body!.indexOf(":") + 9);
         this.auth.login(token);
         this.router.navigate(["/"]);
-      } else {
-        alert("Invalid Credentials");
       }
+    }, err => {
+      if (err.status == 404)
+        alert("Developer does not exist");
+      else if (err.status == 401)
+        alert("Invalid Credentials");
+      else if (err.status == 400)
+        alert("Invalid Input");
     });
   }
 
   onSignUp() {
-    let credentials:Developer = {developer_email: this.developer_email.value, developer_password: this.developer_password.value};
+    let credentials:Developer = {developer_email: this.signup_developer_email.value, developer_password: this.signup_developer_password.value};
     this.matchmakingApi.signUp(credentials).subscribe(response =>{
-      if(response.status == 200) {
-        this.matchmakingApi.login(credentials).subscribe(response =>{
-          if(response.status == 200) {
-            let token:string = response.body!.substring(response.body!.indexOf(":") + 2);
-            this.auth.login(token);
-          } else {
-            alert("Invalid Credentials");
-          }
-        });
-      } else {
-        alert("SIGNUP FAILED");
-      }
+      if(response.status == 200)
+        this.onLogin(true);
+    }, err => {
+      if (err.status == 409) 
+        alert("Developer Already exists");
+      else if (err.status == 400) 
+        alert("Invalid Input");
     });
   }
 }

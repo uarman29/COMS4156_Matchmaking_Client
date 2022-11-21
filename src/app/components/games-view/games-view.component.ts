@@ -4,6 +4,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { FormBuilder, FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
+import { AuthServiceService } from 'src/app/services/auth-service.service';
 
 @Component({
   selector: 'app-games-view',
@@ -81,12 +82,22 @@ export class GamesViewComponent implements OnInit {
 
   updateData() {
     this.matchmatckingAPI.getGames().subscribe(response =>{
-      this.games = response.body ? response.body.games : [];
-      this.dataSource.data = this.games;
+      if(response.status == 200 || response.status == 204) {
+        this.games = response.body ? response.body.games : [];
+        this.dataSource.data = this.games;
+        if(response.status == 204) {
+          alert("No games found");
+        }
+      }
+    }, err => {
+      if (err.status == 401) {
+        this.auth.logout();
+        window.location.href = "/login";
+      }
     });
   }
   
-  constructor(private matchmatckingAPI: MatchmakingApiService, private fb: FormBuilder, private router: Router) { }
+  constructor(private matchmatckingAPI: MatchmakingApiService, private fb: FormBuilder, private router: Router, private auth: AuthServiceService) { }
 
   navigate(game: Game_Response_Object) {
     this.router.navigate(["/games/"+ game.id]);
@@ -98,11 +109,19 @@ export class GamesViewComponent implements OnInit {
     })
 
     this.matchmatckingAPI.getGames().subscribe(response =>{
-      if(response.status == 200) {
+      if(response.status == 200 || response.status == 204) {
         this.games = response.body ? response.body.games : [];
         this.dataSource = new MatTableDataSource<Game_Response_Object>(this.games);
         this.dataSource.paginator = this.paginator;
-      } 
+        if(response.status == 204) {
+          alert("No games found");
+        }
+      }
+    }, err => {
+      if (err.status == 401) {
+        this.auth.logout();
+        window.location.href = "/login";
+      }
     });
 
     this.router.events.subscribe(() => this.updateData());
@@ -124,9 +143,18 @@ export class GamesViewComponent implements OnInit {
       weights: weights
     };
     this.matchmatckingAPI.addGame(gd).subscribe(response => {
-      this.updateData();
-      this.gameForm.reset();
-      $("#game-add-success-alert").removeClass("d-none");
+      if(response.status == 200) {
+        this.updateData();
+        this.gameForm.reset();
+        $("#game-add-success-alert").removeClass("d-none");
+      }
+    }, err => {
+      if(err.status == 400) {
+        alert("Invalid Input");
+      } else if(err.status == 401) {
+        this.auth.logout();
+        window.location.href = "/login";
+      }
     });
   }
 
