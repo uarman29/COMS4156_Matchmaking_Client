@@ -176,22 +176,24 @@ export class MatchmakingApiService {
     return this.http.post<Post_Games_Response>("/api/games", gd, options);
   }
 
-  updateGame(gd: Game_Details): Observable<HttpResponse<Game_Details>> {
+  updateGame(game_id:number, gd: Game_Details) {
     let options = {
       observe: 'response' as const,
+      responseType: 'text' as const,
       headers: new HttpHeaders()
         .set("Authorization", "Bearer " + this.auth.getAPIKey())
     };
-    return this.http.put<Game_Details>("/api/games", gd, options);
+    return this.http.put("/api/games/" + game_id, gd, options);
   }
 
-  deleteGame(game_id: number): Observable<HttpResponse<Game_Details>> {
+  deleteGame(game_id: number) {
     let options = {
       observe: 'response' as const,
+      responseType: 'text' as const,
       headers: new HttpHeaders()
         .set("Authorization", "Bearer " + this.auth.getAPIKey())
     };
-    return this.http.delete<Game_Details>("/api/games/" + game_id, options);
+    return this.http.delete("/api/games/" + game_id, options);
   }
 
   getRatings(game_id: number): Observable<HttpResponse<Get_Players_Response>> {
@@ -213,22 +215,28 @@ export class MatchmakingApiService {
     return this.http.post("/api/games/" + game_id + "/players", pgr, options);
   }
 
-  updateRating(game_id: number, pgr: Player_Game_Ratings): Observable<HttpResponse<Player_Game_Ratings>> {
+  updateRating(game_id: number, pgr: Player_Game_Ratings) {
     let options = {
       observe: 'response' as const,
+      responseType: 'text' as const,
       headers: new HttpHeaders()
         .set("Authorization", "Bearer " + this.auth.getAPIKey())
     };
-    return this.http.put<Player_Game_Ratings>("/api/games/" + game_id + "/players/" + pgr.player_email, pgr, options);
+    return this.http.put("/api/games/" + game_id + "/players/" + pgr.player_email, pgr, options);
   }
 
-  deleteRating(game_id: number, player_email: string): Observable<HttpResponse<Player_Game_Ratings>> {
+  deleteRating(game_id: number, player_email: string){
+    let obj = {
+      player_emails: [player_email]
+    };
     let options = {
       observe: 'response' as const,
+      responseType: 'text' as const,
+      body: obj,
       headers: new HttpHeaders()
         .set("Authorization", "Bearer " + this.auth.getAPIKey())
     };
-    return this.http.delete<Player_Game_Ratings>("/api/games/" + game_id + "/players/" + player_email , options);
+    return this.http.delete("/api/games/" + game_id + "/players", options);
   }
 
   matchmake(game_id:number, player_emails: string[]) {

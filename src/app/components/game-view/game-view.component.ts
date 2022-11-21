@@ -222,7 +222,7 @@ export class GameViewComponent implements OnInit {
       game_parameter4_name: this.game_parameter4_name.value,
       game_parameter4_weight: this.game_parameter4_weight.value,
     };
-    this.matchmakingAPI.updateGame(gd).subscribe();
+    this.matchmakingAPI.updateGame(this.game.game_id,gd).subscribe();
     this.router.navigate(['/games']);
   }
 
