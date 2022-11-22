@@ -166,11 +166,21 @@
     </form>
 </div>
 
-<div>
+<div class="mt-5 mb-5">
     <h1>Matchmake</h1>
     <form [formGroup] = "matchmakingForm">
         <label for="player_emails" class="form-label">Player Emails</label>
         <textarea class="form-control" formControlName = "player_emails" required></textarea>
-        <button type="button" class="btn btn-primary" [disabled]="!matchmakingForm.valid" (click)="matchmake()">Matchmake</button>
+        <button type="button" class="btn btn-primary float-end mt-1" [disabled]="!matchmakingForm.valid" (click)="matchmake()">Matchmake</button>
     </form>
+    <div class="mt-3">
+      <h1>Matchmaking Results</h1>
+      <div>
+        <pre>{{matchMakingResult | json}}</pre>
+      </div>
+    </div>
+</div>
+
+<div style="height:200px;">
+
 </div>

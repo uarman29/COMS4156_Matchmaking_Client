@@ -22,9 +22,13 @@ export class AuthServiceService {
     this.cookieService.set("Matchmaking-Token", this.APIKey);
   }
 
-  logout() {
+  async logout() {
     this.APIKey = "";
     this.cookieService.delete("Matchmaking-Token");
+    while(this.checkLoginStatus() != false) {
+      await new Promise(r => setTimeout(r, 1000));
+    }
+    window.location.href = "/login";
   }
 
   getAPIKey() {

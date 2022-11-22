@@ -3,7 +3,7 @@ import { Game_Details, Game_Response_Object, Get_Games_Response, MatchmakingApiS
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { FormBuilder, FormControl } from '@angular/forms';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { AuthServiceService } from 'src/app/services/auth-service.service';
 
 @Component({
@@ -85,6 +85,7 @@ export class GamesViewComponent implements OnInit {
       if(response.status == 200 || response.status == 204) {
         this.games = response.body ? response.body.games : [];
         this.dataSource.data = this.games;
+        console.log("NAVIGATION")
         if(response.status == 204) {
           alert("No games found");
         }
@@ -97,7 +98,12 @@ export class GamesViewComponent implements OnInit {
     });
   }
   
-  constructor(private matchmatckingAPI: MatchmakingApiService, private fb: FormBuilder, private router: Router, private auth: AuthServiceService) { }
+  constructor(
+    private matchmatckingAPI: MatchmakingApiService, 
+    private fb: FormBuilder, 
+    private router: Router, 
+    private auth: AuthServiceService
+    ) { }
 
   navigate(game: Game_Response_Object) {
     this.router.navigate(["/games/"+ game.id]);
@@ -110,6 +116,7 @@ export class GamesViewComponent implements OnInit {
 
     this.matchmatckingAPI.getGames().subscribe(response =>{
       if(response.status == 200 || response.status == 204) {
+        console.log("INITIAL")
         this.games = response.body ? response.body.games : [];
         this.dataSource = new MatTableDataSource<Game_Response_Object>(this.games);
         this.dataSource.paginator = this.paginator;
@@ -124,7 +131,12 @@ export class GamesViewComponent implements OnInit {
       }
     });
 
-    this.router.events.subscribe(() => this.updateData());
+    // this.router.events.subscribe((ev) => {
+    //   if(ev instanceof NavigationEnd) {
+    //     if(ev.url == "/games")
+    //       this.updateData()
+    //   }
+    // });
   }
 
   onAddGame() {
@@ -132,8 +144,19 @@ export class GamesViewComponent implements OnInit {
       return;
     }
 
-    let parameters: string[] = [this.game_parameter1_name.value, this.game_parameter2_name.value, this.game_parameter3_name.value,this.game_parameter4_name.value]
-    let weights: number[] = [this.game_parameter1_weight.value, this.game_parameter2_weight.value, this.game_parameter3_weight.value,this.game_parameter4_weight.value]
+    let parameters: string[] = [
+      this.game_parameter1_name.value ? this.game_parameter1_name.value : "", 
+      this.game_parameter2_name.value ? this.game_parameter2_name.value : "", 
+      this.game_parameter3_name.value ? this.game_parameter3_name.value : "",
+      this.game_parameter4_name.value ? this.game_parameter4_name.value : ""
+    ]
+
+    let weights: number[] = [
+      this.game_parameter1_weight.value ? this.game_parameter1_weight.value: 0, 
+      this.game_parameter2_weight.value ? this.game_parameter2_weight.value: 0, 
+      this.game_parameter3_weight.value ? this.game_parameter3_weight.value: 0,
+      this.game_parameter4_weight.value ? this.game_parameter4_weight.value: 0
+    ]
     let gd:Post_Games_Request = {
       name: this.game_name.value, 
       category: this.catgeory.value,

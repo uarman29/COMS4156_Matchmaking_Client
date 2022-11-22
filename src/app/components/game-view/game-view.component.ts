@@ -14,6 +14,7 @@ export class GameViewComponent implements OnInit {
   game!:Game_Details;
   ratings:Player_Game_Ratings[] = [];
   id!:number;
+  matchMakingResult = {};
 
   gameForm = this.fb.group({
     game_name: [""],
@@ -176,7 +177,6 @@ export class GameViewComponent implements OnInit {
           this.router.navigate(["/games"]);
         } else if(err.status == 401){
           this.auth.logout();
-          window.location.href = "/login";
         }
       });
     }
@@ -211,7 +211,6 @@ export class GameViewComponent implements OnInit {
         this.router.navigate(["/games"]);
       } else if (err.status == 401) {
         this.auth.logout();
-        window.location.href = "/login";
       }
     });
   }
@@ -227,14 +226,14 @@ export class GameViewComponent implements OnInit {
       category: this.catgeory.value,
       players_per_team: this.players_per_team.value, 
       teams_per_match: this.teams_per_match.value, 
-      game_parameter1_name: this.game_parameter1_name.value,
-      game_parameter1_weight: this.game_parameter1_weight.value,
-      game_parameter2_name: this.game_parameter2_name.value,
-      game_parameter2_weight: this.game_parameter2_weight.value,
-      game_parameter3_name: this.game_parameter3_name.value,
-      game_parameter3_weight: this.game_parameter3_weight.value,
-      game_parameter4_name: this.game_parameter4_name.value,
-      game_parameter4_weight: this.game_parameter4_weight.value,
+      game_parameter1_name: this.game_parameter1_name.value ? this.game_parameter1_name.value : "", 
+      game_parameter1_weight: this.game_parameter1_weight.value ? this.game_parameter1_weight.value : 0,
+      game_parameter2_name: this.game_parameter2_name.value ? this.game_parameter2_name.value : "",
+      game_parameter2_weight: this.game_parameter2_weight.value ? this.game_parameter2_weight.value : 0,
+      game_parameter3_name: this.game_parameter3_name.value ? this.game_parameter3_name.value : "",
+      game_parameter3_weight: this.game_parameter3_weight.value ? this.game_parameter3_weight.value : 0,
+      game_parameter4_name: this.game_parameter4_name.value ? this.game_parameter4_name.value : "",
+      game_parameter4_weight: this.game_parameter4_weight.value ? this.game_parameter4_weight.value : 0,
     };
     this.matchmakingAPI.updateGame(this.game.game_id,gd).subscribe(response => {
       if (response.status ==  200)
@@ -246,7 +245,6 @@ export class GameViewComponent implements OnInit {
         alert("Invalid Game Details");
       } else if (err.status == 401) {
         this.auth.logout();
-        window.location.href = "/login";
       }
     });
   }
@@ -261,7 +259,6 @@ export class GameViewComponent implements OnInit {
         this.router.navigate(['/games']);
       } else if (err.status == 401) {
         this.auth.logout();
-        window.location.href = "/login";
       }
     });
   }
@@ -269,10 +266,10 @@ export class GameViewComponent implements OnInit {
   addRating() {
     let rating:Post_Player_Request = {};
     rating[this.player_email.value]= {
-      game_parameter1_value: this.game_parameter1_value.value,
-      game_parameter2_value: this.game_parameter2_value.value,
-      game_parameter3_value: this.game_parameter3_value.value,
-      game_parameter4_value: this.game_parameter4_value.value,
+      game_parameter1_value: this.game_parameter1_value.value ? this.game_parameter1_value.value : 0,
+      game_parameter2_value: this.game_parameter2_value.value ? this.game_parameter2_value.value : 0,
+      game_parameter3_value: this.game_parameter3_value.value ? this.game_parameter3_value.value : 0,
+      game_parameter4_value: this.game_parameter4_value.value ? this.game_parameter4_value.value : 0,
     };
     this.matchmakingAPI.addRating(this.game.game_id, rating).subscribe(response => {
       if(response.status == 200) {
@@ -286,21 +283,32 @@ export class GameViewComponent implements OnInit {
         alert("Invalid Rating Details");
       } else if (err.status == 401) {
         this.auth.logout();
-        window.location.href = "/login";
       }
     });
   }
 
   updateRating(i: number) {
-    let rating:Player_Game_Ratings = {
-      game_id: this.game.game_id,
-      player_email: this.current_ratings.at(i).get('player_email')!.value, 
-      game_parameter1_value: this.current_ratings.at(i).get('game_parameter1_value')!.value,
-      game_parameter2_value: this.current_ratings.at(i).get('game_parameter2_value')!.value,
-      game_parameter3_value: this.current_ratings.at(i).get('game_parameter3_value')!.value,
-      game_parameter4_value: this.current_ratings.at(i).get('game_parameter4_value')!.value,
+    let rating:Post_Player_Request = {};
+    let email = this.current_ratings.at(i).get('player_email')!.value;
+    rating[email]= {
+      game_parameter1_value: this.current_ratings.at(i).get('game_parameter1_value')!.value ? this.current_ratings.at(i).get('game_parameter1_value')!.value : 0,
+      game_parameter2_value: this.current_ratings.at(i).get('game_parameter2_value')!.value ? this.current_ratings.at(i).get('game_parameter2_value')!.value : 0,
+      game_parameter3_value: this.current_ratings.at(i).get('game_parameter3_value')!.value ? this.current_ratings.at(i).get('game_parameter3_value')!.value : 0,
+      game_parameter4_value: this.current_ratings.at(i).get('game_parameter4_value')!.value ? this.current_ratings.at(i).get('game_parameter4_value')!.value : 0,
     };
-    this.matchmakingAPI.updateRating(this.game.game_id, rating).subscribe(() => this.loadRatings());
+    this.matchmakingAPI.updateRating(this.game.game_id, rating).subscribe(response => {
+      if(response.status == 200) {
+        this.loadRatings();
+      }
+    }, err => {
+      if (err.status == 403 || err.status == 404) {
+        this.router.navigate(['/games']);
+      } else if (err.status == 400) {
+        alert("Invalid Rating Details");
+      } else if (err.status == 401) {
+        this.auth.logout();
+      }
+    });
   }
 
   deleteRating(i: number) {
@@ -316,7 +324,6 @@ export class GameViewComponent implements OnInit {
         alert("Invalid Input");
       } else if (err.status == 401) {
         this.auth.logout();
-        window.location.href = "/login";
       }
     });
   }
@@ -325,6 +332,7 @@ export class GameViewComponent implements OnInit {
     let players: string[] = this.player_emails.value.split(",").map((player: string) => player.trim());
     this.matchmakingAPI.matchmake(this.game.game_id, players).subscribe(response =>{
       if (response.status == 200) {
+        this.matchMakingResult = response.body ? response.body : {};
         console.log(response.body);
       }
     }, err => {
@@ -332,7 +340,6 @@ export class GameViewComponent implements OnInit {
         alert("Invalid Input");
       } else if(err.status == 401) {
         this.auth.logout();
-        window.location.href = "/login";
       }
     })
   }

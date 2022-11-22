@@ -215,14 +215,14 @@ export class MatchmakingApiService {
     return this.http.post("/api/games/" + game_id + "/players", pgr, options);
   }
 
-  updateRating(game_id: number, pgr: Player_Game_Ratings) {
+  updateRating(game_id: number, pgr: Post_Player_Request) {
     let options = {
       observe: 'response' as const,
       responseType: 'text' as const,
       headers: new HttpHeaders()
         .set("Authorization", "Bearer " + this.auth.getAPIKey())
     };
-    return this.http.put("/api/games/" + game_id + "/players/" + pgr.player_email, pgr, options);
+    return this.http.put("/api/games/" + game_id + "/players", pgr, options);
   }
 
   deleteRating(game_id: number, player_email: string){
