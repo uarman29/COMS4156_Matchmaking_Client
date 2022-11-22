@@ -85,7 +85,6 @@ export class GamesViewComponent implements OnInit {
       if(response.status == 200 || response.status == 204) {
         this.games = response.body ? response.body.games : [];
         this.dataSource.data = this.games;
-        console.log("NAVIGATION")
         if(response.status == 204) {
           alert("No games found");
         }
@@ -93,7 +92,6 @@ export class GamesViewComponent implements OnInit {
     }, err => {
       if (err.status == 401) {
         this.auth.logout();
-        window.location.href = "/login";
       }
     });
   }
@@ -116,7 +114,6 @@ export class GamesViewComponent implements OnInit {
 
     this.matchmatckingAPI.getGames().subscribe(response =>{
       if(response.status == 200 || response.status == 204) {
-        console.log("INITIAL")
         this.games = response.body ? response.body.games : [];
         this.dataSource = new MatTableDataSource<Game_Response_Object>(this.games);
         this.dataSource.paginator = this.paginator;
@@ -127,7 +124,6 @@ export class GamesViewComponent implements OnInit {
     }, err => {
       if (err.status == 401) {
         this.auth.logout();
-        window.location.href = "/login";
       }
     });
 
@@ -176,7 +172,6 @@ export class GamesViewComponent implements OnInit {
         alert("Invalid Input");
       } else if(err.status == 401) {
         this.auth.logout();
-        window.location.href = "/login";
       }
     });
   }
