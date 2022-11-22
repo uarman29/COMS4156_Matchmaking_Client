@@ -17,9 +17,19 @@ export class AuthServiceService {
     }
   }
 
-  login(APIKey: string) {
+  async login(APIKey: string) {
     this.APIKey = APIKey;
     this.cookieService.set("Matchmaking-Token", this.APIKey);
+    let count = 0
+    while(this.checkLoginStatus() == false) {
+      await new Promise(r => setTimeout(r, 1000));
+      count += 1
+      if (count == 5) {
+        alert("Could not login")
+        break
+      }
+    }
+    window.location.href = "/";
   }
 
   async logout() {

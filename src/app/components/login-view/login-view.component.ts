@@ -53,7 +53,6 @@ export class LoginViewComponent implements OnInit {
       if(response.status == 200) {
         let token:string = response.body!.substring(response.body!.indexOf(":") + 9);
         this.auth.login(token);
-        this.router.navigate(["/"]);
       }
     }, err => {
       if (err.status == 404)
