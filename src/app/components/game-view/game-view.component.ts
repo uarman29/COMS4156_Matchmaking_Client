@@ -288,15 +288,15 @@ export class GameViewComponent implements OnInit {
   }
 
   updateRating(i: number) {
-    let rating:Post_Player_Request = {};
+    let rating = {};
     let email = this.current_ratings.at(i).get('player_email')!.value;
-    rating[email]= {
+    rating = {
       game_parameter1_value: this.current_ratings.at(i).get('game_parameter1_value')!.value ? this.current_ratings.at(i).get('game_parameter1_value')!.value : 0,
       game_parameter2_value: this.current_ratings.at(i).get('game_parameter2_value')!.value ? this.current_ratings.at(i).get('game_parameter2_value')!.value : 0,
       game_parameter3_value: this.current_ratings.at(i).get('game_parameter3_value')!.value ? this.current_ratings.at(i).get('game_parameter3_value')!.value : 0,
       game_parameter4_value: this.current_ratings.at(i).get('game_parameter4_value')!.value ? this.current_ratings.at(i).get('game_parameter4_value')!.value : 0,
     };
-    this.matchmakingAPI.updateRating(this.game.game_id, rating).subscribe(response => {
+    this.matchmakingAPI.updateRating(this.game.game_id, email, rating).subscribe(response => {
       if(response.status == 200) {
         this.loadRatings();
       }

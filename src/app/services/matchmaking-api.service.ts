@@ -215,28 +215,24 @@ export class MatchmakingApiService {
     return this.http.post("/api/games/" + game_id + "/players", pgr, options);
   }
 
-  updateRating(game_id: number, pgr: Post_Player_Request) {
+  updateRating(game_id: number, player_email:string, rating: Object) {
     let options = {
       observe: 'response' as const,
       responseType: 'text' as const,
       headers: new HttpHeaders()
         .set("Authorization", "Bearer " + this.auth.getAPIKey())
     };
-    return this.http.put("/api/games/" + game_id + "/players", pgr, options);
+    return this.http.put("/api/games/" + game_id + "/players/" + player_email, rating, options);
   }
 
   deleteRating(game_id: number, player_email: string){
-    let obj = {
-      player_emails: [player_email]
-    };
     let options = {
       observe: 'response' as const,
       responseType: 'text' as const,
-      body: obj,
       headers: new HttpHeaders()
         .set("Authorization", "Bearer " + this.auth.getAPIKey())
     };
-    return this.http.delete("/api/games/" + game_id + "/players", options);
+    return this.http.delete("/api/games/" + game_id + "/players/" + player_email, options);
   }
 
   matchmake(game_id:number, player_emails: string[]) {
