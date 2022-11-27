@@ -41,7 +41,8 @@ export class GameViewComponent implements OnInit {
   });
 
   matchmakingForm = this.fb.group({
-    player_emails: [""]
+    player_emails: [""],
+    matchmakingType: ['basic']
   });
 
   get game_name() {
@@ -118,6 +119,10 @@ export class GameViewComponent implements OnInit {
 
   get player_emails() {
     return this.matchmakingForm.get('player_emails') as FormControl;
+  }
+
+  get matchmakingType() {
+    return this.matchmakingForm.get('matchmakingType') as FormControl;
   }
 
   constructor(
@@ -299,6 +304,7 @@ export class GameViewComponent implements OnInit {
     this.matchmakingAPI.updateRating(this.game.game_id, email, rating).subscribe(response => {
       if(response.status == 200) {
         this.loadRatings();
+        alert("Rating Updated");
       }
     }, err => {
       if (err.status == 403 || err.status == 404) {
@@ -316,6 +322,7 @@ export class GameViewComponent implements OnInit {
       if(response.status == 200) {
         this.ratingsForm.reset();
         this.loadRatings();
+        alert("Rating Deleted")
       }
     }, err => {
       if (err.status == 403 || err.status == 404) {
@@ -330,10 +337,10 @@ export class GameViewComponent implements OnInit {
 
   matchmake() {
     let players: string[] = this.player_emails.value.split(",").map((player: string) => player.trim());
-    this.matchmakingAPI.matchmake(this.game.game_id, players).subscribe(response =>{
+    let matchmakingType:string = this.matchmakingType.value;
+    this.matchmakingAPI.matchmake(this.game.game_id, players, matchmakingType).subscribe(response =>{
       if (response.status == 200) {
         this.matchMakingResult = response.body ? response.body : {};
-        console.log(response.body);
       }
     }, err => {
       if(err.status == 400) {

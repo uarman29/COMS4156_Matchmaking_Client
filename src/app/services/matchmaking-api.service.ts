@@ -14,12 +14,14 @@ export interface Get_Players_Response {
 }
 
 export interface Post_Player_Request {
-  [key: string]: {
-    game_parameter1_value?: number,
-    game_parameter2_value?: number,
-    game_parameter3_value?: number,
-    game_parameter4_value?: number,
-  }
+  [key: string]: Stats_Object
+}
+
+export interface Stats_Object {
+  game_parameter1_value?: number,
+  game_parameter2_value?: number,
+  game_parameter3_value?: number,
+  game_parameter4_value?: number,
 }
 
 
@@ -215,7 +217,7 @@ export class MatchmakingApiService {
     return this.http.post("/api/games/" + game_id + "/players", pgr, options);
   }
 
-  updateRating(game_id: number, player_email:string, rating: Object) {
+  updateRating(game_id: number, player_email:string, rating: Stats_Object) {
     let options = {
       observe: 'response' as const,
       responseType: 'text' as const,
@@ -235,14 +237,14 @@ export class MatchmakingApiService {
     return this.http.delete("/api/games/" + game_id + "/players/" + player_email, options);
   }
 
-  matchmake(game_id:number, player_emails: string[]) {
+  matchmake(game_id:number, player_emails: string[], type: string) {
     let options = {
       observe: 'response' as const,
       headers: new HttpHeaders()
         .set("Authorization", "Bearer " + this.auth.getAPIKey())
     };
     let obj = {
-      matchmaking_type: "basic",
+      matchmaking_type: type,
       game_id: game_id,
       player_emails: player_emails
     }

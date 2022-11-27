@@ -1,0 +1,9 @@
+<div class="mx-auto px-5">
+    <h1 class="text-center">Matchmaking API Client</h1>
+    <ng-container *ngIf = "auth.checkLoginStatus()">
+        <div class="mt-5 px-5">
+            <h3>Your API Key:</h3>
+            <div style="word-wrap: break-word;">{{auth.getAPIKey()}}</div>
+        </div>
+    </ng-container>
+</div>

@@ -14,7 +14,7 @@ import { AuthServiceService } from 'src/app/services/auth-service.service';
 export class GamesViewComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   games: Game_Response_Object[] = []
-  displayedColumns:string[] = ["game_name", "category", "players_per_team", "teams_per_match", "view"];
+  displayedColumns:string[] = ["game_id","game_name", "category", "players_per_team", "teams_per_match", "view"];
   dataSource!:MatTableDataSource<Game_Response_Object>;
 
   gameForm = this.fb.group({

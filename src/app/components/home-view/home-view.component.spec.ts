@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { MatchmakeViewComponent } from './matchmake-view.component';
+import { HomeViewComponent } from './home-view.component';
 
-describe('MatchmakeViewComponent', () => {
-  let component: MatchmakeViewComponent;
-  let fixture: ComponentFixture<MatchmakeViewComponent>;
+describe('HomeViewComponent', () => {
+  let component: HomeViewComponent;
+  let fixture: ComponentFixture<HomeViewComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ MatchmakeViewComponent ]
+      declarations: [ HomeViewComponent ]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(MatchmakeViewComponent);
+    fixture = TestBed.createComponent(HomeViewComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
