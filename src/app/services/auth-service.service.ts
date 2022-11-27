@@ -22,6 +22,7 @@ export class AuthServiceService {
     this.cookieService.set("Matchmaking-Token", this.APIKey);
     let count = 0
     while(this.checkLoginStatus() == false) {
+      this.cookieService.set("Matchmaking-Token", this.APIKey);
       await new Promise(r => setTimeout(r, 1000));
       count += 1
       if (count == 5) {
@@ -36,6 +37,7 @@ export class AuthServiceService {
     this.APIKey = "";
     this.cookieService.delete("Matchmaking-Token");
     while(this.checkLoginStatus() != false) {
+      this.cookieService.delete("Matchmaking-Token");
       await new Promise(r => setTimeout(r, 1000));
     }
     window.location.href = "/login";
