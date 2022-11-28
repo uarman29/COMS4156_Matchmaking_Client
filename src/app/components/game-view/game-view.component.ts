@@ -286,6 +286,8 @@ export class GameViewComponent implements OnInit {
         this.router.navigate(['/games']);
       } else if (err.status == 400) {
         alert("Invalid Rating Details");
+      } else if (err.status == 409) {
+        alert("Player rating already exists")
       } else if (err.status == 401) {
         this.auth.logout();
       }
